@@ -16,6 +16,9 @@ pub enum AppError {
 
     #[error("Internal server error")]
     Internal,
+
+    #[error("Internal server error : {0}")]
+    InternalWith(String)
 }
 
 
@@ -31,6 +34,7 @@ impl IntoResponse for AppError {
             AppError::NotFound => (StatusCode::NOT_FOUND, self.to_string()),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, self.to_string()),
             AppError::Internal => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()),
+            AppError::InternalWith(_) => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()),
         };
 
         let body = Json(ErrorResponse { error: msg });

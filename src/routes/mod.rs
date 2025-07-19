@@ -1,12 +1,15 @@
+pub mod leetcode;
+
 use axum::{routing::get, Json, Router};
 use serde::Serialize;
 
-use crate::error::{AppError, AppResult};
+use crate::{error::{AppError, AppResult}, routes::leetcode::leetcode_routes};
 
 pub fn create_router() -> Router{
     Router::new()
     .route("/healthz", get(health_handler))
     .route("/crash", get(crash_handler))
+    .nest("/leet", leetcode_routes())
 }
 
 #[derive(Serialize)]

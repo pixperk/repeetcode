@@ -3,6 +3,7 @@ use crate::routes::create_router;
 
 mod error;
 mod routes;
+mod gql;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
