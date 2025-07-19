@@ -11,6 +11,9 @@ pub enum AppError {
     #[error("Not found")]
     NotFound,
 
+    #[error("Bad Request {0}")]
+    BadRequest(String),
+
     #[error("Unauthorized")]
     Unauthorized,
 
@@ -32,6 +35,7 @@ impl IntoResponse for AppError {
         let (status, msg) = match &self {
             AppError::Database(_) => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()),
             AppError::NotFound => (StatusCode::NOT_FOUND, self.to_string()),
+            AppError::BadRequest(_) => (StatusCode::BAD_REQUEST, self.to_string()),
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, self.to_string()),
             AppError::Internal => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()),
             AppError::InternalWith(_) => (StatusCode::INTERNAL_SERVER_ERROR, self.to_string()),

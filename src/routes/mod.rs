@@ -1,15 +1,17 @@
 pub mod leetcode;
+pub mod auth;
 
 use axum::{routing::get, Json, Router};
 use serde::Serialize;
 
-use crate::{error::{AppError, AppResult}, routes::leetcode::leetcode_routes};
+use crate::{error::{AppError, AppResult}, routes::{auth::auth_routes, leetcode::leetcode_routes}, state::AppState};
 
-pub fn create_router() -> Router{
+pub fn create_router(state : AppState) -> Router{
     Router::new()
     .route("/healthz", get(health_handler))
     .route("/crash", get(crash_handler))
     .nest("/leet", leetcode_routes())
+    .merge(auth_routes(state.clone()))
 }
 
 #[derive(Serialize)]
