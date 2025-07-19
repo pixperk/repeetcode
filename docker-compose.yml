@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16
+    container_name: leetcode_auth_db
+    restart: always
+    environment:
+      POSTGRES_USER: yashaswi
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: repeetcode
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+
+networks:
+  backend:

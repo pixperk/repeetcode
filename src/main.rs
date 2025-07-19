@@ -1,9 +1,11 @@
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use crate::routes::create_router;
+use crate::{db::init_db, routes::create_router};
 
 mod error;
 mod routes;
 mod gql;
+mod auth;
+mod db;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -15,6 +17,9 @@ async fn main() -> anyhow::Result<()> {
         .with(tracing_subscriber::fmt::layer())
         .try_init()
         .expect("Failed to initialize tracing subscriber");
+
+    let pool = init_db().await;
+     sqlx::migrate!().run(&pool).await.unwrap();
 
     let port = 3000;
     let addr = format!("0.0.0.0:{port}");
