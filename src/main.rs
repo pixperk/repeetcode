@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{env, sync::Arc};
 
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use crate::{db::init_db, routes::create_router, state::AppState};
@@ -27,11 +27,14 @@ async fn main() -> anyhow::Result<()> {
     let pool = init_db().await;
      sqlx::migrate!().run(&pool).await.unwrap();
 
+     let jwt_secret = env::var("JWT_SECRET").expect("JWT_SECRET must be set");
+
      let state = AppState {
         db: Arc::new(pool),
+        jwt_secret
     };
 
-    let port = 3000;
+    let port = 8080;
     let addr = format!("0.0.0.0:{port}");
 
     tracing::info!("Starting repeetcode server on {}", addr);

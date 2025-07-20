@@ -5,6 +5,7 @@ use uuid::Uuid;
 pub mod service;
 pub mod jwt;
 pub mod handler;
+pub mod middleware;
 
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]

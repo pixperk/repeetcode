@@ -19,3 +19,5 @@ uuid = { version = "1", features = ["serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 jsonwebtoken = "9"
 bcrypt = "0.17.0"
+async-trait = "0.1"
+axum-auth = "0.8"

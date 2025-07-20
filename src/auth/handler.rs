@@ -4,8 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     auth::{
-        jwt::create_jwt,
-        service::{create_user_if_not_exists, get_user_by_username, hash_password},
+        jwt::create_jwt, middleware::AuthenticatedUser, service::{create_user_if_not_exists, get_user_by_username, hash_password}
     },
     error::{AppError, AppResult},
     gql::client::check_user_exists,
@@ -50,7 +49,7 @@ pub async fn login_handler(
         return Err(AppError::Unauthorized);
     }
 
-    let token = create_jwt(&user.username);
+    let token = create_jwt(user.id, user.username, &state);
     Ok(Json(AuthResponse { token }))
 }
 
@@ -65,6 +64,13 @@ pub async fn signup_handler(
     let password = hash_password(&payload.password)?;
     let user =
         create_user_if_not_exists(&state.db, &payload.username, &payload.email, &password).await?;
-    let token = create_jwt(&user.username);
+      let token = create_jwt(user.id, user.username, &state);
     Ok(Json(AuthResponse { token }))
+}
+
+pub async fn current_user(
+    State(state): State<AppState>,
+    user: AuthenticatedUser,
+) -> String{
+    format!("Hello, {}! Your ID is {}", user.username, user.user_id)
 }
