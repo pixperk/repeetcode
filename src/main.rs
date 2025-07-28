@@ -10,6 +10,7 @@ mod auth;
 mod db;
 mod state;
 mod domain;
+mod sync;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

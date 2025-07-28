@@ -10,7 +10,7 @@ pub fn create_router(state : AppState) -> Router{
     Router::new()
     .route("/healthz", get(health_handler))
     .route("/crash", get(crash_handler))
-    .nest("/leet", leetcode_routes())
+    .nest("/leet", leetcode_routes(state.clone()))
     .merge(auth_routes(state.clone()))
 }
 

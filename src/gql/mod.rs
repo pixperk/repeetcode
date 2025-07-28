@@ -1,4 +1,5 @@
 pub mod client;
+pub mod recent_problems;
 
 use reqwest::Client;
 use serde::de::DeserializeOwned;

@@ -4,7 +4,9 @@ use sqlx::prelude::Type;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Type, Serialize, Deserialize)]
 #[repr(i32)]
+#[derive(Default)]
 pub enum ReviewStage {
+    #[default]
     First = 0,
     After8Hours = 1,
     After8Days = 2,
@@ -13,32 +15,27 @@ pub enum ReviewStage {
     After90Days = 5,
 }
 
-impl Default for ReviewStage {
-    fn default() -> Self {
-        ReviewStage::First
-    }
-}
 
 
 #[derive(Debug, Clone, sqlx::FromRow)]
 pub struct Problem {
-    pub id: uuid::Uuid,
-    pub title: String,
     pub user_id: uuid::Uuid,
+    pub problem_slug: String,
+    pub stage: ReviewStage,
     pub first_solved: DateTime<Utc>,
     pub next_solve_on: DateTime<Utc>,
-    pub stage: ReviewStage,
+    pub title: String,
     pub paused: bool,
 }
 
 impl Problem {
-    pub fn new(id: uuid::Uuid, title: String, user_id: uuid::Uuid, first_solved: DateTime<Utc>) -> Self {
+    pub fn new(slug: String, user_id: uuid::Uuid, first_solved: DateTime<Utc>, title: String) -> Self {
         let mut prob = Self {
-            id,
-            title,
+            problem_slug: slug,
             user_id,
             first_solved,
             next_solve_on : first_solved,
+            title,
             stage: ReviewStage::First,
             paused: false,
         };
