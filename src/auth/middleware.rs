@@ -1,12 +1,11 @@
 use axum::{
-    extract::{FromRef, FromRequestParts, State},
+    extract::{FromRef, FromRequestParts},
     http::request::Parts,
     
 };
-use jsonwebtoken::{decode, DecodingKey, Validation};
 use reqwest::header::AUTHORIZATION;
 
-use crate::{auth::jwt::Claims, error::AppError, state::AppState};
+use crate::{auth::jwt::{decode_jwt}, error::AppError, state::AppState};
 
 #[derive(Debug, Clone)]
 pub struct AuthenticatedUser {
@@ -37,19 +36,13 @@ where
             .strip_prefix("Bearer ")
             .ok_or(AppError::Unauthorized)?;
 
-        let jwt_secret = app_state.jwt_secret;
 
-        let token_data = decode::<Claims>(
-            token,
-            &DecodingKey::from_secret(jwt_secret.as_bytes()),
-            &Validation::default(),
-        )
-        .map_err(|_| AppError::Unauthorized)?;
+        let token_data = decode_jwt(token, &app_state).map_err(|_| AppError::Unauthorized)?;
 
         Ok(AuthenticatedUser {
-            user_id: uuid::Uuid::parse_str(&token_data.claims.sub)
+            user_id: uuid::Uuid::parse_str(&token_data.sub)
                 .map_err(|_| AppError::Unauthorized)?,
-            username: token_data.claims.username,
+            username: token_data.username,
         })
     }
 }

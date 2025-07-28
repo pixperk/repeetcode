@@ -69,7 +69,6 @@ pub async fn signup_handler(
 }
 
 pub async fn current_user(
-    State(state): State<AppState>,
     user: AuthenticatedUser,
 ) -> String{
     format!("Hello, {}! Your ID is {}", user.username, user.user_id)
